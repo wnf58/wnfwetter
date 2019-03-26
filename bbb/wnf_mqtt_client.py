@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Test
+
 import paho.mqtt.client as mqtt
 
 BONE2013 = '192.168.80.106'
@@ -19,3 +21,4 @@ client.on_message = on_message
 client.connect(BONE2013, 1883, 60)
 
 client.loop_forever()
+

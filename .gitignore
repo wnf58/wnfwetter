@@ -1,3 +1,4 @@
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -102,3 +103,14 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+Würde .idea/encodings.xml löschen
+Würde .idea/markdown-navigator/ löschen
+Würde .idea/misc.xml löschen
+Würde .idea/modules.xml löschen
+Würde .idea/wnfwetter.iml löschen
+Würde .idea/workspace.xml löschen
+Würde esp1/ löschen
+Würde esp2/ löschen
+/esp1/geheim.py
+/esp2/geheim.py
+/bbb/geheim.py

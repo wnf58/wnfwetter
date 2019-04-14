@@ -8,23 +8,48 @@ import geheim
 import sqlite3
 
 aLetzteTemp = 0.0
+aLetzteTime = time.time()
 
 
 def isDatenbankOK():
     con = sqlite3.connect('wnftemp.db')
     cur = con.cursor()
-    sql="""
-CREATE TABLE `temp` (
-	`id`	integer NOT NULL,
-	`Timestamp`	INTEGER NOT NULL,
-	`Temperatur`	INTEGER NOT NULL,
-	`Dauer`	INTEGER NOT NULL,
-	PRIMARY KEY(`id`)
+    sql = """
+create table if not exists zeitgrad (
+    id integer primary key autoincrement ,
+	zeit integer not null,
+	grad numeric not null
 );
     """
     cur.execute(sql)
+    sql = 'select count(*) from zeitgrad'
+    rows = cur.execute(sql)
+    for r in rows:
+        print('Bisher erfasste Datensätze %s' % r[0])
     con.commit()
-    return False
+    return True
+
+
+def speicher(aZeit, aGrad):
+    print(aZeit, aGrad)
+    con = sqlite3.connect('wnftemp.db')
+    cur = con.cursor()
+    sql = "INSERT INTO zeitgrad (zeit,grad) VALUES (?,?)"
+    cur.execute(sql, (aZeit, aGrad))
+    con.commit()
+    return cur.lastrowid
+
+
+def anzeigeID(aID):
+    if aID:
+        con = sqlite3.connect('wnftemp.db')
+        cur = con.cursor()
+        sql = "SELECT zeit,grad,id FROM zeitgrad WHERE ID=%s" % (aID)
+        rows = cur.execute(sql)
+        for r in rows:
+            s = time.strftime("%H:%M:%S",time.localtime(r[0]))
+            print('Speicher: %s  Temperatur %s°C' % (s, "{0:.1f}".format(r[1])))
+        con.commit()
 
 
 def on_connect(client, userdata, flags, rc):
@@ -34,6 +59,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     global aLetzteTemp
+    global aLetzteTime
     try:
         # print(client)
         # print(userdata)
@@ -49,8 +75,13 @@ def on_message(client, userdata, msg):
             # print(aJson['TIME'])
             # t = aJson['TIME']
             # s = time.strftime("%b %d %Y %H:%M:%S", time.gmtime(t))
+            aZeit = time.time()
+            aGrad = x
+            aLetzteTime = aZeit
+            aID = speicher(aZeit, aGrad)
             s = time.strftime("%H:%M:%S")
-            print('Messung: %s  Temperatur %s°C' % (s, "{0:.1f}".format(x)))
+            print('Messung : %s  Temperatur %s°C' % (s, "{0:.1f}".format(x)))
+            anzeigeID(aID)
     except Exception as E:
         print('Fehler', E)
         raise

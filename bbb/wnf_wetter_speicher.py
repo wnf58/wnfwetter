@@ -1,18 +1,23 @@
-#! /usr/bin/python3
+#! /usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 
+import os
 import paho.mqtt.client as mqtt
 import time
 import json
 import geheim
 import sqlite3
+import wnf_wetter_tools as T
 
 aLetzteTemp = 0.0
 aLetzteTime = time.time()
 
 
 def isDatenbankOK():
-    con = sqlite3.connect('wnftemp.db')
+    dn = T.iniGetDatenbank()
+    if dn=='':
+        return False
+    con = sqlite3.connect(dn)
     cur = con.cursor()
     sql = """
 create table if not exists zeitgrad (
@@ -32,7 +37,7 @@ create table if not exists zeitgrad (
 
 def speicher(aZeit, aGrad):
     print(aZeit, aGrad)
-    con = sqlite3.connect('wnftemp.db')
+    con = sqlite3.connect(T.iniGetDatenbank())
     cur = con.cursor()
     sql = "INSERT INTO zeitgrad (zeit,grad) VALUES (?,?)"
     cur.execute(sql, (aZeit, aGrad))
@@ -42,7 +47,7 @@ def speicher(aZeit, aGrad):
 
 def anzeigeID(aID):
     if aID:
-        con = sqlite3.connect('wnftemp.db')
+        con = sqlite3.connect(T.iniGetDatenbank())
         cur = con.cursor()
         sql = "SELECT zeit,grad,id FROM zeitgrad WHERE ID=%s" % (aID)
         rows = cur.execute(sql)
@@ -88,6 +93,7 @@ def on_message(client, userdata, msg):
 
 
 def main():
+    #os.chdir(os.path.dirname(__file__))
     if isDatenbankOK():
         client = mqtt.Client()
         client.on_connect = on_connect

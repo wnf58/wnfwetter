@@ -2,4 +2,4 @@
 INIDATEINAME = 'wnf_wetter.ini'
 
 PROGNAME = 'wnfWetter'
-PROGBUILD = 1000
+PROGBUILD = 1001

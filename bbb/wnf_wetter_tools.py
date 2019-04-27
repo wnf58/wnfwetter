@@ -56,3 +56,7 @@ def getHHMMSS():
 
 def getDatumHHMMSS():
     return time.strftime("%Y-%m-%d %H:%M:%S")
+
+def getDyGraphsDateTime(aTimespamp):
+    # 2009/07/12 12:34:56
+    return time.strftime("%Y/%m/%d %H:%M:%S",time.localtime(aTimespamp))

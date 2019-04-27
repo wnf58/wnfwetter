@@ -11,20 +11,22 @@ import wnf_wetter_db as db
 
 www = os.path.join(os.path.dirname(__file__), 'www')
 
+
 def keinZugriff(daten):
     s = ('Kein Zugriff %s (Serverzeit %s)' % (C.PROGBUILD, (time.strftime("%d.%m.%Y %H:%M:%S"))))
     return template('<b>Hello {{name}}!</b><hr>{{meldung}}', name=daten, meldung=s)
 
+
 def wetterstatus():
-    aCaption = "%s.%d" % (C.PROGNAME, C.PROGBUILD)
-    aStatus = (('Version', aCaption),
-                         ('Proxy-Hostname', T.getHostname()),
-                         ('zuletzt aktualisiert', '%s (Serverzeit)' % (T.getHHMMSS()))
-                         )
-    aCount, aDaten,aDatenKopf = db.dbListZeitGradAsRows()
-    aLesbar=[]
+    aCaption = C.PROGNAME
+    aStatus = (('Version', C.PROGBUILD),
+               ('Proxy-Hostname', T.getHostname()),
+               ('zuletzt aktualisiert', '%s (Serverzeit)' % (T.getHHMMSS()))
+               )
+    aCount, aDaten, aDatenKopf = db.dbListZeitGradAsRows()
+    aLesbar = []
     for r in aDaten:
-        aLesbar+=[(r[0],time.strftime("%H:%M:%S",time.localtime(r[1])),"{0:.1f}".format(r[2]))]
+        aLesbar += [(r[0], time.strftime("%H:%M:%S", time.localtime(r[1])), "{0:.1f}".format(r[2]))]
     print(aLesbar)
     output = template('wnf_wetter_status',
                       title=aCaption,
@@ -51,14 +53,32 @@ def js(filepath):
     return static_file(filepath, root=os.path.join(www, "js"))
 
 
+@get("/<filepath:re:.*\.html>")
+def html(filepath):
+    return static_file(filepath, root=www)
+
+
+@get("/daten/<filepath:re:.*\.csv>")
+def csv(filepath):
+    return static_file(filepath, root=os.path.join(www, "daten"))
+
+
 @route('/')
 def index():
     return wetterstatus()
 
 
+@route('/100')
+def route_100():
+    db.refresh_100(os.path.join(www, "daten", "wetter_100.csv"))
+    db.refresh_24h(os.path.join(www, "daten", "wetter_24h.csv"))
+    db.refresh_Woche(os.path.join(www, "daten", "wetter_woche.csv"))
+    return html('wetter_100_werte.html')
+
+
 def isDatenbankOK():
     dn = T.iniGetDatenbank()
-    if dn=='':
+    if dn == '':
         return False
     con = sqlite3.connect(dn)
     cur = con.cursor()
@@ -69,6 +89,7 @@ def isDatenbankOK():
     con.commit()
     return True
 
+
 def startBottle():
     from bottle import run, debug
     debug(True)
@@ -77,7 +98,7 @@ def startBottle():
 
 
 def main():
-    #os.chdir(os.path.dirname(__file__))
+    # os.chdir(os.path.dirname(__file__))
     if isDatenbankOK():
         print('Starten wnf_wetter_http')
         startBottle()

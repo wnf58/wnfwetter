@@ -19,18 +19,14 @@ def keinZugriff(daten):
 
 def wetterstatus():
     aCaption = C.PROGNAME
-    aStatus = (('Version', C.PROGBUILD),
-               ('Proxy-Hostname', T.getHostname()),
-               ('zuletzt aktualisiert', '%s (Serverzeit)' % (T.getHHMMSS()))
-               )
     aCount, aDaten, aDatenKopf = db.dbListZeitGradAsRows()
     aLesbar = []
     for r in aDaten:
-        aLesbar += [(r[0], time.strftime("%H:%M:%S", time.localtime(r[1])), "{0:.1f}".format(r[2]))]
+        aLesbar += [(time.strftime("%d.%m.%Y %H:%M:%S", time.localtime(r[0])), "{0:.1f}".format(r[1]))]
     print(aLesbar)
-    output = template('wnf_wetter_status',
+    output = template('wetter_status',
                       title=aCaption,
-                      WetterStatus=aStatus,
+                      WetterStatus=statusZeilen(),
                       WetterCount=aCount,
                       WetterDaten=aLesbar,
                       WetterKopf=aDatenKopf
@@ -58,6 +54,11 @@ def html(filepath):
     return static_file(filepath, root=www)
 
 
+@get("/<filepath:re:.*\.json>")
+def json(filepath):
+    return static_file(filepath, root=www)
+
+
 @get("/daten/<filepath:re:.*\.csv>")
 def csv(filepath):
     return static_file(filepath, root=os.path.join(www, "daten"))
@@ -68,12 +69,56 @@ def index():
     return wetterstatus()
 
 
+def statusZeilen():
+    zeit, temp = db.letzterMesswert()
+    zeit = time.strftime("%d.%m.%Y %H:%M:%S", time.localtime(zeit))
+    temp = "{0:.1f}".format(temp)
+    aStatus = (('Version', C.PROGBUILD),
+               ('Proxy-Hostname', T.getHostname()),
+               ('zuletzt aktualisiert', '%s (Serverzeit)' % (T.getHHMMSS())),
+               ('letzter Messwert um', '%s ' % (zeit)),
+               ('aktuelle Temperatur', '%s ' % (temp))
+               )
+    return aStatus
+
+
+def wetterLinie(aUeberschrift, aCSVDatei):
+    aCaption = C.PROGNAME
+    output = template('wetter_linie',
+                      title=aCaption,
+                      WetterStatus=statusZeilen(),
+                      Ueberschrift=aUeberschrift,
+                      CSVDatei=aCSVDatei
+                      )
+    return output
+
+
 @route('/100')
 def route_100():
-    db.refresh_100(os.path.join(www, "daten", "wetter_100.csv"))
-    db.refresh_24h(os.path.join(www, "daten", "wetter_24h.csv"))
-    db.refresh_Woche(os.path.join(www, "daten", "wetter_woche.csv"))
-    return html('wetter_100_werte.html')
+    dn = "wetter_100.csv"
+    db.refresh_100(os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 100 Werte', dn)
+
+
+@route('/07d')
+def route_07d():
+    dn = "wetter_07d.csv"
+    db.refresh_xxTage(7, os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 7 Tage', dn)
+
+
+@route('/28d')
+def route_28d():
+    dn = "wetter_28d.csv"
+    db.refresh_xxTage(28, os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 4 Wochen', dn)
+
+
+@route('/24h')
+def route_24h():
+    dn = 'wetter_24h.csv'
+    db.refresh_24h(os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 24 Stunden', dn)
 
 
 def isDatenbankOK():

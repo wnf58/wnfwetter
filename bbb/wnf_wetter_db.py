@@ -116,7 +116,7 @@ def dbListZeitGradAsRows():
     try:
         aSQL = 'SELECT COUNT(*) FROM ZEITGRAD'
         anz = dbCount(aSQL)
-        aSQL = "SELECT zeit,grad FROM zeitgrad ORDER BY ID DESC"
+        aSQL = "SELECT zeit,grad FROM zeitgrad ORDER BY ID DESC  LIMIT 400"
         aKopf = ('Zeit', 'Temperatur')
         return anz, dbListTabelleAsRows(aSQL), aKopf
     except:
@@ -148,12 +148,13 @@ def refresh_xx(dn, aSQL):
                 x = (r[2] + alt1 + alt2) / 3
             else:
                 x = r[2]
+            if (alt2!=100):
+                s = "%s,%s" % (T.getDyGraphsDateTime(r[1]), "{0:.1f}".format(x))
+                # print(s)
+                with open(dn, 'a') as out:
+                    out.write(s + '\n')
             alt2 = alt1
             alt1 = r[2]
-            s = "%s,%s" % (T.getDyGraphsDateTime(r[1]), "{0:.1f}".format(x))
-            # print(s)
-            with open(dn, 'a') as out:
-                out.write(s + '\n')
     return
 
 
@@ -166,12 +167,18 @@ def refresh_100(dn):
 
 
 def refresh_24h(dn):
-    t = time.time() - (24 * 60 * 60)
+    t = time.time() - (26 * 60 * 60)
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
     return
 
+def refresh_48h(dn):
+    t = time.time() - (50 * 60 * 60)
+    # print(t)
+    aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
+    refresh_xx(dn, aSQL)
+    return
 
 def refresh_Woche(dn):
     t = time.time() - (7 * 24 * 60 * 60)

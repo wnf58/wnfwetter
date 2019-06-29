@@ -120,6 +120,12 @@ def route_24h():
     db.refresh_24h(os.path.join(www, "daten", dn))
     return wetterLinie('Die letzten 24 Stunden', dn)
 
+@route('/48h')
+def route_48h():
+    dn = 'wetter_48h.csv'
+    db.refresh_48h(os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 48 Stunden', dn)
+
 
 def isDatenbankOK():
     dn = T.iniGetDatenbank()

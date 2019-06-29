@@ -21,6 +21,20 @@ Wetterstation
 
 $ sudo pip3 install paho-mqtt
 
+# Update
+
+auf dem Entwicklungsrechner
+$ verkauf_wetter.py
+$ ssh bone2013 
+
+auf dem BBB
+$ sudo service wnf_wetter_speicher stop
+$ sudo service wnf_wetter_speicher start
+$ sudo service wnf_wetter_http stop
+$ sudo service wnf_wetter_http start
+ 
+
+
 # Literatur
 
 https://www.thomaschristlieb.de/ein-python-script-mit-systemd-als-daemon-systemd-tut-garnicht-weh/

@@ -53,12 +53,13 @@
 </table>
 <hr/>
 <h1>{{Ueberschrift}}</h1>
-<div id="graphdiv1" style="width:500px; height:300px;"></div>
+<div id="graphdiv1" style="width:100%; height:400px;"></div>
 <script type="text/javascript">
   g1 = new Dygraph(
     document.getElementById("graphdiv1"),
     "daten/{{CSVDatei}}", // path to CSV file
-    {}          // options
+    {
+     }          // options
   );
 </script>
 </body>

@@ -43,12 +43,9 @@
         %end
     </tr>
     %end
-    <tr><td></td><td><a href="./">Liste aller Werte</a></td></tr>
-    <tr><td></td><td><a href="./100">Die letzten 100 Werte</a></td></tr>
-    <tr><td></td><td><a href="./24h">Die letzten 24 Stunden</a></td></tr>
-    <tr><td></td><td><a href="./48h">Die letzten 48 Stunden</a></td></tr>
-    <tr><td></td><td><a href="./07d">Die letzten 7 Tage</a></td></tr>
-    <tr><td></td><td><a href="./28d">Die letzten 4 Wochen</a></td></tr>
+    <tr><td><a href="./100">Die letzten 100 Werte</a></td><td><a href="./24h">Die letzten 24 Stunden</a></td></tr>
+    <tr><td><a href="./48h">Die letzten 48 Stunden</a></td><td><a href="./07d">Die letzten 7 Tage</a></td></tr>
+    <tr><td><a href="./28d">Die letzten 4 Wochen</a></td><td><a href="./">Liste aller Werte</a></td></tr>
 </table>
 <hr/>
 <h3>{{WetterCount}} Wetterdaten</h3>

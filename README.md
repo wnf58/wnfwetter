@@ -28,8 +28,10 @@ $ verkauf_wetter.py
 $ ssh bone2013 
 
 auf dem BBB
+(nicht immer nötig)
 $ sudo service wnf_wetter_speicher stop
 $ sudo service wnf_wetter_speicher start
+
 $ sudo service wnf_wetter_http stop
 $ sudo service wnf_wetter_http start
  

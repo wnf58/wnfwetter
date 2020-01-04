@@ -44,6 +44,20 @@ def speicher(aZeit, aGrad):
     con.commit()
     return cur.lastrowid
 
+def updateLetzteZeit(aZeit):
+    aID = 0
+    print(aZeit)
+    con = sqlite3.connect(T.iniGetDatenbank())
+    cur = con.cursor()
+    sql = "SELECT MAX(id) FROM zeitgrad"
+    rows = cur.execute(sql)
+    for r in rows:
+        aID = r[0]
+    if aID>0:
+        sql = "UPDATE zeitgrad SET zeit = ? WHERE ID = ?"
+        cur.execute(sql, (aZeit, aID))
+    con.commit()
+    return aID
 
 def anzeigeID(aID):
     if aID:
@@ -75,17 +89,22 @@ def on_message(client, userdata, msg):
         # print(aJson['TEMP'])
         x = aJson['TEMP']
         x = float("{0:.1f}".format(x))
+        aZeit = time.time()
         if ((x >= aLetzteTemp + 0.25) or (x <= aLetzteTemp - 0.25)):
             aLetzteTemp = x
             # print(aJson['TIME'])
             # t = aJson['TIME']
             # s = time.strftime("%b %d %Y %H:%M:%S", time.gmtime(t))
-            aZeit = time.time()
             aGrad = x
             aLetzteTime = aZeit
             aID = speicher(aZeit, aGrad)
             s = time.strftime("%H:%M:%S")
             print('Messung : %s  Temperatur %s°C' % (s, "{0:.1f}".format(x)))
+            anzeigeID(aID)
+        elif (aZeit - aLetzteTime)>60:
+            # alle 60 Sekunden die Zeit aktualisieren, auch wenn die Tempereatur sich nicht ändert
+            aID = updateLetzteZeit(aZeit)
+            aLetzteTime = aZeit
             anzeigeID(aID)
     except Exception as E:
         print('Fehler', E)

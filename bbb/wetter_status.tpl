@@ -31,7 +31,7 @@
 </head>
 <body>
 <div class="bg-div">
-    <img class="logo-img" height="80" alt="dsp-logo" src="/img/wetter_logo.png"/>
+    <img class="logo-img" height="40" alt="dsp-logo" src="/img/wetter_logo.png"/>
     <div class="logo-text">wnf Wetterserver</div>
 </div>
 <hr/>

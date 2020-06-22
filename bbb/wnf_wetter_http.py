@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from bottle import route, get, template, static_file
+from bottle import route, get, template, static_file, request, response
 import os
 import time
 import sqlite3
@@ -9,8 +9,40 @@ import wnf_wetter_const as C
 import wnf_wetter_tools as T
 import wnf_wetter_db as db
 
-www = os.path.join(os.path.dirname(__file__), 'www')
+# Das alles fürs Logging
+from datetime import datetime
+from functools import wraps
+import logging
 
+logger = logging.getLogger('wnf_wetter_http')
+
+# set up the logger
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler('wnf_wetter_http.log')
+formatter = logging.Formatter('%(msg)s')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+def log_to_logger(fn):
+    '''
+    Wrap a Bottle request so that a log line is emitted after it's handled.
+    (This decorator can be extended to take the desired logger as a param.)
+    '''
+    @wraps(fn)
+    def _log_to_logger(*args, **kwargs):
+        request_time = datetime.now()
+        actual_response = fn(*args, **kwargs)
+        # modify this to log exactly what you need:
+        logger.info('%s %s %s %s %s' % (request.remote_addr,
+                                        request_time,
+                                        request.method,
+                                        request.url,
+                                        response.status))
+        return actual_response
+    return _log_to_logger
+
+www = os.path.join(os.path.dirname(__file__), 'www')
 
 def keinZugriff(daten):
     s = ('Kein Zugriff %s (Serverzeit %s)' % (C.PROGBUILD, (time.strftime("%d.%m.%Y %H:%M:%S"))))
@@ -142,11 +174,11 @@ def isDatenbankOK():
 
 
 def startBottle():
-    from bottle import run, debug
+    from bottle import run, debug, install
     debug(True)
+    install(log_to_logger)
     aPortClient = T.iniGetBottlePort()
     run(host='0.0.0.0', port=aPortClient)
-
 
 def main():
     # os.chdir(os.path.dirname(__file__))

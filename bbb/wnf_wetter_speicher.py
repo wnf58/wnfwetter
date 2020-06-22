@@ -73,7 +73,8 @@ def anzeigeID(aID):
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.subscribe("computer/esp1")
+    # client.subscribe("computer/esp1")
+    client.subscribe('/Sensor/3B1B3A')
 
 
 def on_message(client, userdata, msg):
@@ -87,7 +88,7 @@ def on_message(client, userdata, msg):
         aJson = json.loads(msg.payload.decode('utf8'))
         # print(aJson)
         # print(aJson['TEMP'])
-        x = aJson['TEMP']
+        x = aJson['T']
         x = float("{0:.1f}".format(x))
         aZeit = time.time()
         if ((x >= aLetzteTemp + 0.25) or (x <= aLetzteTemp - 0.25)):

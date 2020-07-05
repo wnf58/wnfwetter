@@ -15,7 +15,7 @@ aLetzteTime = time.time()
 
 def isDatenbankOK():
     dn = T.iniGetDatenbank()
-    if dn=='':
+    if dn == '':
         return False
     con = sqlite3.connect(dn)
     cur = con.cursor()
@@ -27,6 +27,15 @@ create table if not exists zeitgrad (
 );
     """
     cur.execute(sql)
+    sql = "select count(*) from pragma_table_info('zeitgrad') where name = 'druck'"
+    cur.execute(sql)
+    for row in cur:
+        if row[0] == 0:
+            sql = 'alter table zeitgrad add column druck numeric null'
+            cur.execute(sql)
+            sql = 'alter table zeitgrad add column feucht numeric null'
+            cur.execute(sql)
+            con.commit()
     sql = 'select count(*) from zeitgrad'
     rows = cur.execute(sql)
     for r in rows:
@@ -35,39 +44,45 @@ create table if not exists zeitgrad (
     return True
 
 
-def speicher(aZeit, aGrad):
-    print(aZeit, aGrad)
+def speicher(aZeit, aGrad, aDruck, aFeuchte):
+    # print(aZeit, aGrad)
     con = sqlite3.connect(T.iniGetDatenbank())
     cur = con.cursor()
-    sql = "INSERT INTO zeitgrad (zeit,grad) VALUES (?,?)"
-    cur.execute(sql, (aZeit, aGrad))
+    sql = "INSERT INTO zeitgrad (zeit,grad,druck,feucht) VALUES (?,?,?,?)"
+    cur.execute(sql, (aZeit, aGrad, aDruck, aFeuchte))
     con.commit()
     return cur.lastrowid
 
+
 def updateLetzteZeit(aZeit):
     aID = 0
-    print(aZeit)
+    # print(aZeit)
     con = sqlite3.connect(T.iniGetDatenbank())
     cur = con.cursor()
     sql = "SELECT MAX(id) FROM zeitgrad"
     rows = cur.execute(sql)
     for r in rows:
         aID = r[0]
-    if aID>0:
+    if aID > 0:
         sql = "UPDATE zeitgrad SET zeit = ? WHERE ID = ?"
         cur.execute(sql, (aZeit, aID))
     con.commit()
     return aID
 
+
 def anzeigeID(aID):
     if aID:
         con = sqlite3.connect(T.iniGetDatenbank())
         cur = con.cursor()
-        sql = "SELECT zeit,grad,id FROM zeitgrad WHERE ID=%s" % (aID)
+        sql = "SELECT zeit,grad,druck,feucht,id FROM zeitgrad WHERE ID=%s" % (aID)
         rows = cur.execute(sql)
         for r in rows:
-            s = time.strftime("%H:%M:%S",time.localtime(r[0]))
-            print('Speicher: %s  Temperatur %s°C' % (s, "{0:.1f}".format(r[1])))
+            s = time.strftime("%H:%M:%S", time.localtime(r[0]))
+            print('Speicher: %s  Temperatur %s°C Luftdruck %s Luftfeuchtigkeit %s' % (s,
+                                                     "{0:.1f}".format(r[1]),
+                                                     "{0:.1f}".format(r[2]),
+                                                     "{0:.1f}".format(r[3])
+                                                     ))
         con.commit()
 
 
@@ -98,11 +113,18 @@ def on_message(client, userdata, msg):
             # s = time.strftime("%b %d %Y %H:%M:%S", time.gmtime(t))
             aGrad = x
             aLetzteTime = aZeit
-            aID = speicher(aZeit, aGrad)
+            aDruck = aJson['L']
+            aDruck = float("{0:.1f}".format(aDruck))
+            aFeuchte = aJson['F']
+            aFeuchte = float("{0:.1f}".format(aFeuchte))
+            aID = speicher(aZeit, aGrad, aDruck, aFeuchte)
             s = time.strftime("%H:%M:%S")
-            print('Messung : %s  Temperatur %s°C' % (s, "{0:.1f}".format(x)))
+            print('Messung : %s  Temperatur %s°C Luftdruck %s Luftfeuchtigkeit %s' % (s,
+                                                                                      "{0:.1f}".format(aGrad),
+                                                                                      "{0:.1f}".format(aDruck),
+                                                                                      "{0:.1f}".format(aFeuchte)))
             anzeigeID(aID)
-        elif (aZeit - aLetzteTime)>60:
+        elif (aZeit - aLetzteTime) > 60:
             # alle 60 Sekunden die Zeit aktualisieren, auch wenn die Tempereatur sich nicht ändert
             aID = updateLetzteZeit(aZeit)
             aLetzteTime = aZeit
@@ -113,7 +135,7 @@ def on_message(client, userdata, msg):
 
 
 def main():
-    #os.chdir(os.path.dirname(__file__))
+    # os.chdir(os.path.dirname(__file__))
     if isDatenbankOK():
         client = mqtt.Client()
         client.on_connect = on_connect

@@ -48,13 +48,24 @@ def keinZugriff(daten):
     s = ('Kein Zugriff %s (Serverzeit %s)' % (C.PROGBUILD, (time.strftime("%d.%m.%Y %H:%M:%S"))))
     return template('<b>Hello {{name}}!</b><hr>{{meldung}}', name=daten, meldung=s)
 
+def formatWert(aWert):
+    if aWert:
+        return "{0:.1f}".format(aWert)
+    else:
+        return ''
+
 
 def wetterstatus():
     aCaption = C.PROGNAME
     aCount, aDaten, aDatenKopf = db.dbListZeitGradAsRows()
     aLesbar = []
     for r in aDaten:
-        aLesbar += [(time.strftime("%d.%m.%Y %H:%M:%S", time.localtime(r[0])), "{0:.1f}".format(r[1]))]
+        aLesbar += [(time.strftime("%d.%m.%Y %H:%M:%S",
+                     time.localtime(r[0])),
+                     formatWert(r[1]),
+                     formatWert(r[2]),
+                     formatWert(r[3])
+                     )]
     print(aLesbar)
     output = template('wetter_status',
                       title=aCaption,
@@ -102,14 +113,18 @@ def index():
 
 
 def statusZeilen():
-    zeit, temp = db.letzterMesswert()
+    zeit, aTemp, aDruck, aFeuchte = db.letzterMesswert()
     zeit = time.strftime("%d.%m.%Y %H:%M:%S", time.localtime(zeit))
-    temp = "{0:.1f}".format(temp)
+    aTemp = "{0:.1f}".format(aTemp)
+    aDruck = "{0:.1f}".format(aDruck)
+    aFeuchte = "{0:.1f}".format(aFeuchte)
     aStatus = (('Version', C.PROGBUILD),
                ('Proxy-Hostname', T.getHostname()),
                ('zuletzt aktualisiert', '%s (Serverzeit)' % (T.getHHMMSS())),
                ('letzter Messwert um', '%s ' % (zeit)),
-               ('aktuelle Temperatur', '%s ' % (temp))
+               ('aktuelle Temperatur', '%s ' % (aTemp)),
+               ('aktueller Luftdruck', '%s ' % (aDruck)),
+               ('aktuelle Luftfeuchtigkeit', '%s ' % (aFeuchte))
                )
     return aStatus
 

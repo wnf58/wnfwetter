@@ -24,7 +24,17 @@ def verbinden():
             """
         cur.execute(sql)
         Datenbank.commit()
+        sql = "select count(*) from pragma_table_info('zeitgrad') where name = 'druck'"
+        cur.execute(sql)
+        for row in cur:
+            if row[0] == 0:
+                sql = 'alter table zeitgrad add column druck numeric null'
+                cur.execute(sql)
+                sql = 'alter table zeitgrad add column feucht numeric null'
+                cur.execute(sql)
+                Datenbank.commit()
         return Datenbank
+
     except Exception as E:
         print('Exception beim Verbinden mit der Datenbank. (%s)' % dn)
         print(E)
@@ -96,30 +106,31 @@ def dbListTabelleAsRows(aSQL):
 
 def letzterMesswert():
     try:
-        aSQL = "SELECT zeit,grad FROM zeitgrad ORDER BY ID DESC LIMIT 1"
+        aSQL = "SELECT zeit,grad,druck,feucht FROM zeitgrad ORDER BY ID DESC LIMIT 1"
         cursor = dbCursorSQL(aSQL)
         if not cursor:
-            return 0, 0
+            return 0, 0, 0, 0
         r = cursor.fetchone()
         if r:
-            if len(r) == 2:
-                return r[0], r[1]
+            if len(r) == 4:
+                return r[0], r[1], r[2], r[3]
             else:
-                return 0, 0
+                return 0, 0, 0, 0
         else:
-            return 0, 0
+            return 0, 0, 0, 0
     except:
-        return 0, 0
+        return 0, 0, 0, 0
 
 
 def dbListZeitGradAsRows():
     try:
         aSQL = 'SELECT COUNT(*) FROM ZEITGRAD'
         anz = dbCount(aSQL)
-        aSQL = "SELECT zeit,grad FROM zeitgrad ORDER BY ID DESC  LIMIT 400"
-        aKopf = ('Zeit', 'Temperatur')
+        aSQL = "SELECT zeit,grad,druck,feucht FROM zeitgrad ORDER BY ID DESC  LIMIT 400"
+        aKopf = ('Zeit', 'Temperatur', 'Luftdruck', 'Luftfeuchtigkeit')
         return anz, dbListTabelleAsRows(aSQL), aKopf
-    except:
+    except Exception as E:
+        print('Fehler', E)
         return 0, (), ()
 
 
@@ -144,11 +155,11 @@ def refresh_xx(dn, aSQL):
             # s = '20070101,62,39'
             # s = "%s,%s" % (T.getDyGraphsDateTime(r[1]), "{0:.1f}".format(r[2]))
             # gleitender Durchschnitt
-            if (alt2!=100):
+            if (alt2 != 100):
                 x = (r[2] + alt1 + alt2) / 3
             else:
                 x = r[2]
-            if (alt2!=100):
+            if (alt2 != 100):
                 s = "%s,%s" % (T.getDyGraphsDateTime(r[1]), "{0:.1f}".format(x))
                 # print(s)
                 with open(dn, 'a') as out:
@@ -173,12 +184,14 @@ def refresh_24h(dn):
     refresh_xx(dn, aSQL)
     return
 
+
 def refresh_48h(dn):
     t = time.time() - (50 * 60 * 60)
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
     return
+
 
 def refresh_Woche(dn):
     t = time.time() - (7 * 24 * 60 * 60)
@@ -201,6 +214,8 @@ def main():
     # refresh_24h('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_24h.csv')
     # refresh_Woche('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_woche.csv')
     print(letzterMesswert())
+    print(dbListZeitGradAsRows())
+
 
 if __name__ == '__main__':
     main()

@@ -171,7 +171,7 @@ def refresh_xx(dn, aSQL):
     return
 
 
-def refresh_MinMax(dn, aSQL):
+def refresh_MinMaxMonth(dn, aSQL):
     # Die Datei wird nur alle Minute neu geschrieben
     if os.path.exists(dn):
         if (time.time() - os.path.getmtime(dn) < 60):
@@ -193,6 +193,33 @@ def refresh_MinMax(dn, aSQL):
             aMax = r[2]
             aMin = r[1]
             s = "%s,%s,%s" % (T.getDyGraphsMonth(r[0]), "{0:.1f}".format(aMin), "{0:.1f}".format(aMax))
+            print(s)
+            with open(dn, 'a') as out:
+                out.write(s + '\n')
+    return
+
+def refresh_MinMaxDate(dn, aSQL):
+    # Die Datei wird nur alle Minute neu geschrieben
+    if os.path.exists(dn):
+        if (time.time() - os.path.getmtime(dn) < 60):
+            return
+        os.remove(dn)
+    print(dn)
+    with open(dn, 'x') as out:
+        s = 'Datum,TempMin,TempMax'
+        out.write(s + '\n')
+    rows = dbListTabelleAsRows(aSQL)
+    if rows:
+        # print(rows)
+        for r in rows:
+            # print(r)
+            # 2009/07/12 12:34:56
+            # s = '20070101,62,39'
+            # s = "%s,%s" % (T.getDyGraphsDateTime(r[1]), "{0:.1f}".format(r[2]))
+            # gleitender Durchschnitt
+            aMax = r[2]
+            aMin = r[1]
+            s = "%s,%s,%s" % (T.getDyGraphsDate(r[0]), "{0:.1f}".format(aMin), "{0:.1f}".format(aMax))
             print(s)
             with open(dn, 'a') as out:
                 out.write(s + '\n')
@@ -222,7 +249,7 @@ GROUP BY date(zeit,'unixepoch')
 ORDER BY zeit DESC
 LIMIT 100
     """
-    refresh_MinMax(dn, aSQL)
+    refresh_MinMaxDate(dn, aSQL)
     return
 
 
@@ -275,7 +302,7 @@ def refresh_xxMonateMinMax(aMonate, dn):
         LIMIT 100
         """
     aSQL = aSQL % t.timestamp()
-    refresh_MinMax(dn, aSQL)
+    refresh_MinMaxMonth(dn, aSQL)
     return
 
 
@@ -286,8 +313,8 @@ def main():
     # refresh_Woche('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_woche.csv')
     # print(letzterMesswert())
     # print(dbListZeitGradAsRows())
-    # refresh_100_MinMax('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_100_minmax.csv')
-    refresh_xxMonateMinMax(13, '/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_minmax.csv')
+    refresh_100_MinMax('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_100_minmax.csv')
+    #refresh_xxMonateMinMax(13, '/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_minmax.csv')
 
 
 if __name__ == '__main__':

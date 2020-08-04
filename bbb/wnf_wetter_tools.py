@@ -66,14 +66,16 @@ def getDyGraphsDateTime(aTimespamp):
 def getDyGraphsDate(aDatum):
     # 2009/07/12 12:34:56
     aDatum = aDatum.split('-')
-    aDatum = "%s/%s/%s 12:00:00" % (aDatum[2], aDatum[1], aDatum[0])
+    aDatum = "%s/%s/%s 12:00:00" % (aDatum[0], aDatum[1], aDatum[2])
     # print(aDatum)
     return aDatum
 
 
 def getDyGraphsMonth(aDatum):
     # 2009/07/12 12:34:56
+    print(aDatum)
     aDatum = aDatum.split('-')
+    print(aDatum)
     aDatum = "%s/%s/01 12:00:00" % (aDatum[1], aDatum[0])
     # print(aDatum)
     return aDatum

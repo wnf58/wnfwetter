@@ -115,16 +115,19 @@ def index():
 def statusZeilen():
     zeit, aTemp, aDruck, aFeuchte = db.letzterMesswert()
     zeit = time.strftime("%d.%m.%Y %H:%M:%S", time.localtime(zeit))
+    r = T.getLuftdruckRec(aDruck,aTemp)
     aTemp = "{0:.1f}".format(aTemp)
-    aDruck = "{0:.1f}".format(aDruck)
+    aDruck = "{0:.1f}".format(int(aDruck/100))
     aFeuchte = "{0:.1f}".format(aFeuchte)
     aStatus = (('Version', C.PROGBUILD),
                ('Proxy-Hostname', T.getHostname()),
                ('zuletzt aktualisiert', '%s (Serverzeit)' % (T.getHHMMSS())),
                ('letzter Messwert um', '%s ' % (zeit)),
-               ('aktuelle Temperatur', '%s ' % (aTemp)),
-               ('aktueller Luftdruck', '%s ' % (aDruck)),
-               ('aktuelle Luftfeuchtigkeit', '%s ' % (aFeuchte))
+               ('aktuelle Temperatur', '%s °C' % (aTemp)),
+               ('aktueller Luftdruck', '%s hPa' % (aDruck)),
+               ('normierter Luftdruck', '%s hPa ' % (r[0])),
+               ('Wetterlage', '%s ' % (r[1])),
+               ('aktuelle Luftfeuchtigkeit', '%s %%' % (aFeuchte))
                )
     return aStatus
 
@@ -139,12 +142,28 @@ def wetterLinie(aUeberschrift, aCSVDatei):
                       )
     return output
 
+def wetterMinMax(aUeberschrift, aCSVDatei):
+    aCaption = C.PROGNAME
+    output = template('wetter_minmax',
+                      title=aCaption,
+                      WetterStatus=statusZeilen(),
+                      Ueberschrift=aUeberschrift,
+                      CSVDatei=aCSVDatei
+                      )
+    return output
+
 
 @route('/100')
 def route_100():
-    dn = "wetter_100.csv"
-    db.refresh_100(os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 100 Werte', dn)
+    dn = "wetter_100_minmax.csv"
+    db.refresh_100_MinMax(os.path.join(www, "daten", dn))
+    return wetterMinMax('Die letzten 100 Werte', dn)
+
+@route('/13m')
+def route_13m():
+    dn = "wetter_13m_minmax.csv"
+    db.refresh_xxMonateMinMax(13,os.path.join(www, "daten", dn))
+    return wetterMinMax('Die letzten 13 Monate', dn)
 
 
 @route('/07d')

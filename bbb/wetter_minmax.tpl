@@ -9,7 +9,6 @@
 
     <link href="./img/favicon.ico" rel="icon" type="image/x-icon"/>
     <link href="./img/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-    <!-- erstellt von https://www.ionos.de/tools/favicon-generator -->
     <link rel="apple-touch-icon" sizes="57x57" href="./img/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="./img/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="./img/apple-icon-72x72.png">
@@ -57,6 +56,7 @@
     document.getElementById("graphdiv1"),
     "daten/{{CSVDatei}}", // path to CSV file
     {
+    valueRange: [{{rangemin}},{{rangemax}}]
      }          // options
   );
 </script>

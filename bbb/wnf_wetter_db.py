@@ -1,10 +1,11 @@
-import sqlite3
-import time
 import datetime
 import os
+import sqlite3
+import time
+
 from dateutil.relativedelta import *
+
 import wnf_wetter_tools as T
-import wnf_wetter_const as C
 
 Datenbank = None
 
@@ -231,7 +232,7 @@ def refresh_100(dn):
     # aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID DESC LIMIT 100" % t
     aSQL = "SELECT id,zeit,grad FROM zeitgrad ORDER BY ID DESC LIMIT 100"
     refresh_xx(dn, aSQL)
-    return
+    return rangeMinMax()
 
 
 def refresh_100_MinMax(dn):
@@ -250,7 +251,18 @@ ORDER BY zeit DESC
 LIMIT 100
     """
     refresh_MinMaxDate(dn, aSQL)
-    return
+    return rangeMinMax()
+
+
+def rangeMinMax():
+    aSQL = "SELECT MIN(grad), MAX(grad) FROM zeitgrad"
+    cursor = dbCursorSQL(aSQL)
+    if not cursor:
+        return -20, +30
+    for r in cursor:
+        aMin = round(r[0]) - 1
+        aMax = round(r[1]) + 1
+        return aMin, aMax
 
 
 def refresh_24h(dn):
@@ -258,7 +270,7 @@ def refresh_24h(dn):
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return
+    return rangeMinMax()
 
 
 def refresh_48h(dn):
@@ -266,7 +278,7 @@ def refresh_48h(dn):
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return
+    return rangeMinMax()
 
 
 def refresh_Woche(dn):
@@ -274,7 +286,7 @@ def refresh_Woche(dn):
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return
+    return rangeMinMax()
 
 
 def refresh_xxTage(aTage, dn):
@@ -282,7 +294,7 @@ def refresh_xxTage(aTage, dn):
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return
+    return rangeMinMax()
 
 
 def refresh_xxMonateMinMax(aMonate, dn):

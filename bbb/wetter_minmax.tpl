@@ -56,7 +56,8 @@
     document.getElementById("graphdiv1"),
     "daten/{{CSVDatei}}", // path to CSV file
     {
-    valueRange: [{{rangemin}},{{rangemax}}]
+    valueRange: [{{rangemin}},{{rangemax}}],
+    drawAxesAtZero: true
      }          // options
   );
 </script>

@@ -96,10 +96,10 @@ def on_message(client, userdata, msg):
     global aLetzteTemp
     global aLetzteTime
     try:
-        # print(client)
-        # print(userdata)
-        # print(msg)
-        # print(msg.topic + " " + str(msg.payload))
+        #print(client)
+        #print(userdata)
+        #print(type(msg))
+        # print(msg.topic + " | "+str(msg.qos)+' | ' + str(msg.payload))
         aJson = json.loads(msg.payload.decode('utf8'))
         # print(aJson)
         # print(aJson['TEMP'])

@@ -2,6 +2,10 @@ p {
 	border: 1px solid #ccc;
 }
 
+.AktuelleTemeratur {
+	font-size: 6.0em;
+  }
+
 .logo-img {
 	float: left;
 	position: relative;

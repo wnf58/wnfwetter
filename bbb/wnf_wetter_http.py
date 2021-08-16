@@ -1,18 +1,19 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from bottle import route, get, template, static_file, request, response
+import logging
 import os
-import time
 import sqlite3
-import wnf_wetter_const as C
-import wnf_wetter_tools as T
-import wnf_wetter_db as db
-
+import time
 # Das alles fürs Logging
 from datetime import datetime
 from functools import wraps
-import logging
+
+from bottle import route, get, template, static_file, request, response
+
+import wnf_wetter_const as C
+import wnf_wetter_db as db
+import wnf_wetter_tools as T
 
 logger = logging.getLogger('wnf_wetter_http')
 
@@ -67,8 +68,10 @@ def wetterstatus():
                      formatWert(r[3])
                      )]
     print(aLesbar)
+    aTemperatur = statusZeilen()[4][1]
     output = template('wetter_status',
                       title=aCaption,
+                      AktuelleTemperatur=aTemperatur,
                       WetterStatus=statusZeilen(),
                       WetterCount=aCount,
                       WetterDaten=aLesbar,
@@ -134,8 +137,10 @@ def statusZeilen():
 
 def wetterLinie(aUeberschrift, aCSVDatei, aMin, aMax):
     aCaption = C.PROGNAME
+    aTemperatur = statusZeilen()[4][1]
     output = template('wetter_linie',
                       title=aCaption,
+                      AktuelleTemperatur=aTemperatur,
                       WetterStatus=statusZeilen(),
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,
@@ -146,8 +151,10 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMin, aMax):
 
 def wetterMinMax(aUeberschrift, aCSVDatei,aMin, aMax):
     aCaption = C.PROGNAME
+    aTemperatur = statusZeilen()[4][1]
     output = template('wetter_minmax',
                       title=aCaption,
+                      AktuelleTemperatur=aTemperatur,
                       WetterStatus=statusZeilen(),
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,
@@ -189,6 +196,7 @@ def route_24h():
     dn = 'wetter_24h.csv'
     aMin, aMax = db.refresh_24h(os.path.join(www, "daten", dn))
     return wetterLinie('Die letzten 24 Stunden', dn, aMin, aMax)
+
 
 @route('/48h')
 def route_48h():

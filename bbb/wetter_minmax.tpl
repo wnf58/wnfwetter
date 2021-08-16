@@ -36,6 +36,8 @@
     <div class="logo-text">wnf Wetterserver</div>
 </div>
 <hr/>
+<div class="AktuelleTemeratur">{{AktuelleTemperatur}}</div>
+<hr/>
 <table>
     %for row in WetterStatus:
     <tr>

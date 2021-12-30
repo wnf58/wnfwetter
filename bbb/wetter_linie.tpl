@@ -37,19 +37,6 @@
 <hr/>
 <div class="AktuelleTemeratur">{{AktuelleTemperatur}}</div>
 <hr/>
-<table>
-    %for row in WetterStatus:
-    <tr>
-        %for col in row:
-        <td>{{col}}</td>
-        %end
-    </tr>
-    %end
-    <tr><td><a href="./100">Die letzten 100 Werte</a></td><td><a href="./24h">Die letzten 24 Stunden</a></td></tr>
-    <tr><td><a href="./48h">Die letzten 48 Stunden</a></td><td><a href="./07d">Die letzten 7 Tage</a></td></tr>
-    <tr><td><a href="./28d">Die letzten 4 Wochen</a></td><td><a href="./">Liste aller Werte</a></td></tr>
-</table>
-<hr/>
 <h1>{{Ueberschrift}}</h1>
 <div id="graphdiv1" style="width:100%; height:400px;"></div>
 <script type="text/javascript">
@@ -63,5 +50,21 @@
     }          // options
   );
 </script>
+<table>
+    <tr><td><a href="./100">Die letzten 100 Werte</a></td><td><a href="./24h">Die letzten 24 Stunden</a></td></tr>
+    <tr><td><a href="./48h">Die letzten 48 Stunden</a></td><td><a href="./07d">Die letzten 7 Tage</a></td></tr>
+    <tr><td><a href="./28d">Die letzten 4 Wochen</a></td><td><a href="./">Liste aller Werte</a></td></tr>
+</table>
+<hr/>
+<table>
+    %for row in WetterStatus:
+    <tr>
+        %for col in row:
+        <td>{{col}}</td>
+        %end
+    </tr>
+    %end
+</table>
+<hr/>
 </body>
 </html>

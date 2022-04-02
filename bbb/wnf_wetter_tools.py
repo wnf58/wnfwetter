@@ -1,12 +1,19 @@
-import os
 import configparser
+import datetime
+import os
 import socket
 import time
+
 import wnf_wetter_const as C
 
 
 def _error(s):
     print('ERROR: %s' % s)
+
+
+def strToDateTime(date_time_str):
+    date_time_str = date_time_str.strip()
+    return datetime.datetime.strptime(date_time_str, '%d.%m.%Y %H:%M:%S')
 
 
 def iniGetString(aSection, aKey):
@@ -58,9 +65,9 @@ def getDatumHHMMSS():
     return time.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def getDyGraphsDateTime(aTimespamp):
+def getDyGraphsDateTime(aTimestamp):
     # 2009/07/12 12:34:56
-    return time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(aTimespamp))
+    return time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(aTimestamp))
 
 
 def getDyGraphsDate(aDatum):

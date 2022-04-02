@@ -135,13 +135,27 @@ def statusZeilen():
     return aStatus
 
 
+def wetterTemperatur(aStatus):
+    aTemperatur = aStatus[4][1]
+    aLetzterWert = aStatus[3][1]
+    # print(aLetzterWert, type(aLetzterWert))
+    aLetzterWert = T.strToDateTime(aLetzterWert)
+    # print(aLetzterWert, type(aLetzterWert))
+    aLetzterWert = datetime.now() - aLetzterWert
+    aLetzterWert = aLetzterWert.total_seconds()
+    if aLetzterWert > 60:
+        aTemperatur = 'Kein Messwert'
+    return aTemperatur
+
+
 def wetterLinie(aUeberschrift, aCSVDatei, aMin, aMax):
     aCaption = C.PROGNAME
-    aTemperatur = statusZeilen()[4][1]
+    aStatus = statusZeilen()
+    aTemperatur = wetterTemperatur(aStatus)
     output = template('wetter_linie',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,
-                      WetterStatus=statusZeilen(),
+                      WetterStatus=aStatus,
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,
                       rangemin=aMin,
@@ -151,11 +165,12 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMin, aMax):
 
 def wetterMinMax(aUeberschrift, aCSVDatei,aMin, aMax):
     aCaption = C.PROGNAME
-    aTemperatur = statusZeilen()[4][1]
+    aStatus = statusZeilen()
+    aTemperatur = wetterTemperatur(aStatus)
     output = template('wetter_minmax',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,
-                      WetterStatus=statusZeilen(),
+                      WetterStatus=aStatus,
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,
                       rangemin=aMin,

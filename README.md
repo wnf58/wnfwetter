@@ -21,6 +21,17 @@ Wetterstation
 
 $ sudo pip3 install paho-mqtt
 
+im Programmordner esp1 bzw. esp2 die Datei geheim.py anlegen
+
+WLAN_SSID = 'FRITZ!Box'
+WLAN_PW = 'xxxx'
+CLIENT_ID = 'wnf_esp1'
+
+im Programmordner bbb die Datei geheim.py anlegen
+
+BBB_IP = '192.168.1.100'
+BBB_SUBSCRIBE = '/Sensor/3B1B3A'
+
 # Update
 
 auf dem Entwicklungsrechner

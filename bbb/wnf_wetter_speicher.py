@@ -89,7 +89,7 @@ def anzeigeID(aID):
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
     # client.subscribe("computer/esp1")
-    client.subscribe('/Sensor/3B1B3A')
+    client.subscribe(geheim.BBB_SUBSCRIBE)
 
 
 def on_message(client, userdata, msg):

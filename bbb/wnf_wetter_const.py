@@ -2,7 +2,7 @@
 INIDATEINAME = 'wnf_wetter.ini'
 
 PROGNAME = 'wnfWetter'
-PROGBUILD = 1016
+PROGBUILD = 1017
 
 """
 Luftdruckwerte

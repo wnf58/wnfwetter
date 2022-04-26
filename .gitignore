@@ -115,3 +115,7 @@ Würde esp2/ löschen
 /esp2/geheim.py
 /bbb/geheim.py
 .idea/
+/bbb/www/daten/wetter_07d.csv
+/bbb/www/daten/wetter_24h.csv
+/bbb/www/daten/wetter_100_minmax.csv
+/bbb/wnf_wetter.db

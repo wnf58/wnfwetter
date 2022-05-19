@@ -148,7 +148,9 @@ def wetterTemperatur(aStatus):
     return aTemperatur
 
 
-def wetterLinie(aUeberschrift, aCSVDatei, aMin, aMax):
+def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
+    print(aMinMax)
+    print(type(aMinMax))
     aCaption = C.PROGNAME
     aStatus = statusZeilen()
     aTemperatur = wetterTemperatur(aStatus)
@@ -158,12 +160,15 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMin, aMax):
                       WetterStatus=aStatus,
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,
-                      rangemin=aMin,
-                      rangemax=aMax
+                      rangemin=aMinMax[0],
+                      rangemax=aMinMax[1],
+                      MinTemperatur=aMinMax[2],
+                      MaxTemperatur=aMinMax[3]
                       )
     return output
 
-def wetterMinMax(aUeberschrift, aCSVDatei,aMin, aMax):
+
+def wetterMinMax(aUeberschrift, aCSVDatei, aMinMax):
     aCaption = C.PROGNAME
     aStatus = statusZeilen()
     aTemperatur = wetterTemperatur(aStatus)
@@ -173,8 +178,10 @@ def wetterMinMax(aUeberschrift, aCSVDatei,aMin, aMax):
                       WetterStatus=aStatus,
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,
-                      rangemin=aMin,
-                      rangemax=aMax
+                      rangemin=aMinMax[0],
+                      rangemax=aMinMax[1],
+                      MinTemperatur=aMinMax[2],
+                      MaxTemperatur=aMinMax[3]
                       )
     return output
 
@@ -182,42 +189,42 @@ def wetterMinMax(aUeberschrift, aCSVDatei,aMin, aMax):
 @route('/100')
 def route_100():
     dn = "wetter_100_minmax.csv"
-    aMin, aMax = db.refresh_100_MinMax(os.path.join(www, "daten", dn))
-    return wetterMinMax('Die letzten 100 Werte', dn, aMin, aMax)
+    aMinMax = db.refresh_100_MinMax(os.path.join(www, "daten", dn))
+    return wetterMinMax('Die letzten 100 Werte', dn, aMinMax)
 
 @route('/13m')
 def route_13m():
     dn = "wetter_13m_minmax.csv"
-    aMin, aMax = db.refresh_xxMonateMinMax(13,os.path.join(www, "daten", dn))
-    return wetterMinMax('Die letzten 13 Monate', dn, aMin, aMax)
+    aMinMax = db.refresh_xxMonateMinMax(13, os.path.join(www, "daten", dn))
+    return wetterMinMax('Die letzten 13 Monate', dn, aMinMax)
 
 
 @route('/07d')
 def route_07d():
     dn = "wetter_07d.csv"
-    aMin, aMax = db.refresh_xxTage(7, os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 7 Tage', dn, aMin, aMax)
+    aMinMax = db.refresh_xxTage(7, os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 7 Tage', dn, aMinMax)
 
 
 @route('/28d')
 def route_28d():
     dn = "wetter_28d.csv"
-    aMin, aMax = db.refresh_xxTage(28, os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 4 Wochen', dn, aMin, aMax)
+    aMinMax = db.refresh_xxTage(28, os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 4 Wochen', dn, aMinMax)
 
 
 @route('/24h')
 def route_24h():
     dn = 'wetter_24h.csv'
-    aMin, aMax = db.refresh_24h(os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 24 Stunden', dn, aMin, aMax)
+    aMinMax = db.refresh_24h(os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 24 Stunden', dn, aMinMax)
 
 
 @route('/48h')
 def route_48h():
     dn = 'wetter_48h.csv'
-    aMin, aMax = db.refresh_48h(os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 48 Stunden', dn, aMin, aMax)
+    aMinMax = db.refresh_48h(os.path.join(www, "daten", dn))
+    return wetterLinie('Die letzten 48 Stunden', dn, aMinMax)
 
 
 def isDatenbankOK():

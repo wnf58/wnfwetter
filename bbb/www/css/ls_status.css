@@ -2,8 +2,12 @@ p {
 	border: 1px solid #ccc;
 }
 
-.AktuelleTemeratur {
+.AktuelleTemperatur {
 	font-size: 6.0em;
+  }
+
+.MinMaxTemperatur {
+	font-size: 4.0em;
   }
 
 .logo-img {

@@ -35,7 +35,10 @@
     <div class="logo-text">wnf Wetterserver</div>
 </div>
 <hr/>
-<div class="AktuelleTemeratur">{{AktuelleTemperatur}}</div>
+<div class="AktuelleTemperatur">{{AktuelleTemperatur}}</div>
+<hr/>
+<div class="MinMaxTemperatur">Minimum {{MinTemperatur}}</div>
+<div class="MinMaxTemperatur">Maximum {{MaxTemperatur}}</div>
 <hr/>
 <h1>{{Ueberschrift}}</h1>
 <div id="graphdiv1" style="width:100%; height:400px;"></div>

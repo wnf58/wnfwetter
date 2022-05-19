@@ -194,7 +194,7 @@ def refresh_MinMaxMonth(dn, aSQL):
             aMax = r[2]
             aMin = r[1]
             s = "%s,%s,%s" % (T.getDyGraphsMonth(r[0]), "{0:.1f}".format(aMin), "{0:.1f}".format(aMax))
-            print(s)
+            # print(s)
             with open(dn, 'a') as out:
                 out.write(s + '\n')
     return
@@ -228,15 +228,15 @@ def refresh_MinMaxDate(dn, aSQL):
 
 
 def refresh_100(dn):
-    # t = time.time() - (24 * 60 * 60)
+    t = time.time() - (24 * 60 * 60)
     # aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID DESC LIMIT 100" % t
     aSQL = "SELECT id,zeit,grad FROM zeitgrad ORDER BY ID DESC LIMIT 100"
     refresh_xx(dn, aSQL)
-    return rangeMinMax()
+    return rangeMinMax(t)
 
 
 def refresh_100_MinMax(dn):
-    # t = time.time() - (24 * 60 * 60)
+    t = time.time() - (24 * 60 * 60)
     # aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID DESC LIMIT 100" % t
     aSQL = """
 SELECT
@@ -251,10 +251,10 @@ ORDER BY zeit DESC
 LIMIT 100
     """
     refresh_MinMaxDate(dn, aSQL)
-    return rangeMinMax()
+    return rangeMinMax(t)
 
 
-def rangeMinMax():
+def gesamtMinMax():
     aSQL = "SELECT MIN(grad), MAX(grad) FROM zeitgrad"
     cursor = dbCursorSQL(aSQL)
     if not cursor:
@@ -265,12 +265,29 @@ def rangeMinMax():
         return aMin, aMax
 
 
+def zeitraumMinMax(t):
+    aSQL = "SELECT MIN(grad), MAX(grad) FROM zeitgrad WHERE zeit > %d" % t
+    cursor = dbCursorSQL(aSQL)
+    if not cursor:
+        return -20, +30
+    for r in cursor:
+        aMin = r[0]
+        aMax = r[1]
+        return aMin, aMax
+
+
+def rangeMinMax(t):
+    aMinG, aMaxG = gesamtMinMax()
+    aMinZ, aMaxZ = zeitraumMinMax(t)
+    return aMinG, aMaxG, aMinZ, aMaxZ
+
+
 def refresh_24h(dn):
     t = time.time() - (26 * 60 * 60)
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return rangeMinMax()
+    return rangeMinMax(t)
 
 
 def refresh_48h(dn):
@@ -278,7 +295,7 @@ def refresh_48h(dn):
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return rangeMinMax()
+    return rangeMinMax(t)
 
 
 def refresh_Woche(dn):
@@ -286,7 +303,7 @@ def refresh_Woche(dn):
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return rangeMinMax()
+    return rangeMinMax(t)
 
 
 def refresh_xxTage(aTage, dn):
@@ -294,12 +311,12 @@ def refresh_xxTage(aTage, dn):
     # print(t)
     aSQL = "SELECT id,zeit,grad FROM zeitgrad WHERE zeit > %d ORDER BY ID" % t
     refresh_xx(dn, aSQL)
-    return rangeMinMax()
+    return rangeMinMax(t)
 
 
 def refresh_xxMonateMinMax(aMonate, dn):
     t = datetime.datetime.now() + relativedelta(months=-aMonate)
-    print(t)
+    # print(t)
     aSQL = """
         SELECT
         strftime("%%m-%%Y", zeit,'unixepoch') as 'Monat', 
@@ -315,7 +332,7 @@ def refresh_xxMonateMinMax(aMonate, dn):
         """
     aSQL = aSQL % t.timestamp()
     refresh_MinMaxMonth(dn, aSQL)
-    return
+    return rangeMinMax(t.timestamp())
 
 
 def main():
@@ -325,8 +342,9 @@ def main():
     # refresh_Woche('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_woche.csv')
     # print(letzterMesswert())
     # print(dbListZeitGradAsRows())
-    refresh_100_MinMax('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_100_minmax.csv')
-    #refresh_xxMonateMinMax(13, '/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_minmax.csv')
+    # aMinMax = refresh_100_MinMax('/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_100_minmax.csv')
+    aMinMax = refresh_xxMonateMinMax(13, '/home/wnf/Entwicklung/PycharmProjects/wnfwetter/bbb/www/daten/wetter_minmax.csv')
+    print(aMinMax)
 
 
 if __name__ == '__main__':

@@ -27,7 +27,7 @@
     <meta name="msapplication-TileImage" content="/img/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     <script type="text/javascript" src="js/dygraph.min.js"></script>
-    <link rel="stylesheet" src="css/dygraph.css"/>
+    <link rel="stylesheet" href="./css/dygraph.css"/>
     <link rel="stylesheet" href="./css/ls_status.css"/>
 </head>
 <body>
@@ -37,8 +37,9 @@
 </div>
 <hr/>
 <div class="AktuelleTemperatur">{{AktuelleTemperatur}}</div>
-<div class="MinMaxTemperatur">Minimum {{MinTemperatur}}</div>
-<div class="MinMaxTemperatur">Maximum {{MaxTemperatur}}</div>
+<div class="MinMaxTemperatur">Minimum {{MinTemperatur}}°C</div>
+<div class="MinMaxTemperatur">Maximum {{MaxTemperatur}}°C</div>
+<div class="MinMaxTemperatur">Brandenburg {{BBTemperatur}}°C</div>
 <hr/>
 <h1>{{Ueberschrift}}</h1>
 <div id="graphdiv1" style="width:100%; height:400px;"></div>

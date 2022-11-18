@@ -15,6 +15,8 @@ import wnf_wetter_const as C
 import wnf_wetter_db as db
 import wnf_wetter_tools as T
 
+from wnf_wetter_brandenburg import brandenburgTemperatur
+
 logger = logging.getLogger('wnf_wetter_http')
 
 # set up the logger
@@ -148,12 +150,15 @@ def wetterTemperatur(aStatus):
     return aTemperatur
 
 
+
+
 def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
     print(aMinMax)
     print(type(aMinMax))
     aCaption = C.PROGNAME
     aStatus = statusZeilen()
     aTemperatur = wetterTemperatur(aStatus)
+    aBrandenburg = brandenburgTemperatur()
     output = template('wetter_linie',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,
@@ -163,7 +168,8 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
                       rangemin=aMinMax[0],
                       rangemax=aMinMax[1],
                       MinTemperatur=aMinMax[2],
-                      MaxTemperatur=aMinMax[3]
+                      MaxTemperatur=aMinMax[3],
+                      BBTemperatur=aBrandenburg
                       )
     return output
 
@@ -172,9 +178,11 @@ def wetterMinMax(aUeberschrift, aCSVDatei, aMinMax):
     aCaption = C.PROGNAME
     aStatus = statusZeilen()
     aTemperatur = wetterTemperatur(aStatus)
+    aBBTemperatur = brandenburgTemperatur()
     output = template('wetter_minmax',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,
+                      BBTemperatur=aBBTemperatur,
                       WetterStatus=aStatus,
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,

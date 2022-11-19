@@ -15,7 +15,7 @@ import wnf_wetter_const as C
 import wnf_wetter_db as db
 import wnf_wetter_tools as T
 
-from wnf_wetter_brandenburg import brandenburgTemperatur
+from wnf_wetter_brandenburg import brandenburgTemperatur, brandenburgTempToCSV
 
 logger = logging.getLogger('wnf_wetter_http')
 
@@ -174,6 +174,24 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
     return output
 
 
+def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
+    print(aMinMax)
+    print(type(aMinMax))
+    aCaption = C.PROGNAME
+    aTemperatur = brandenburgTemperatur()
+    output = template('wetter_linie_bb',
+                      title=aCaption,
+                      AktuelleTemperatur=aTemperatur,
+                      Ueberschrift=aUeberschrift,
+                      CSVDatei=aCSVDatei,
+                      rangemin=aMinMax[0],
+                      rangemax=aMinMax[1],
+                      MinTemperatur=aMinMax[2],
+                      MaxTemperatur=aMinMax[3]
+                      )
+    return output
+
+
 def wetterMinMax(aUeberschrift, aCSVDatei, aMinMax):
     aCaption = C.PROGNAME
     aStatus = statusZeilen()
@@ -234,6 +252,29 @@ def route_48h():
     aMinMax = db.refresh_48h(os.path.join(www, "daten", dn))
     return wetterLinie('Die letzten 48 Stunden', dn, aMinMax)
 
+@route('/bb_24h')
+def route_bb_24h():
+    dn = "wetter_bb_24h.csv"
+    aMinMax = brandenburgTempToCSV(1,os.path.join(www, "daten", dn))
+    return wetterLinie_BB('BB Die letzten 24 Stunden', dn, aMinMax)
+
+@route('/bb_48h')
+def route_bb_48h():
+    dn = "wetter_bb_48h.csv"
+    aMinMax = brandenburgTempToCSV(2,os.path.join(www, "daten", dn))
+    return wetterLinie_BB('BB Die letzten 48 Stunden', dn, aMinMax)
+
+@route('/bb_07d')
+def route_bb_07d():
+    dn = "wetter_bb_07d.csv"
+    aMinMax = brandenburgTempToCSV(7,os.path.join(www, "daten", dn))
+    return wetterLinie_BB('BB Die letzte Woche', dn, aMinMax)
+
+@route('/bb_28d')
+def route_bb_28d():
+    dn = "wetter_bb_28d.csv"
+    aMinMax = brandenburgTempToCSV(28,os.path.join(www, "daten", dn))
+    return wetterLinie_BB('BB Die letzten 4 Wochen', dn, aMinMax)
 
 def isDatenbankOK():
     dn = T.iniGetDatenbank()

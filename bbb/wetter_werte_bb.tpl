@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>wnfWetter BB</title>
+    <title>{{Ueberschrift}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="refresh" content="60">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes"/>
+
     <link href="./img/favicon.ico" rel="icon" type="image/x-icon"/>
     <link href="./img/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <!-- erstellt von https://www.ionos.de/tools/favicon-generator -->
     <link rel="apple-touch-icon" sizes="57x57" href="./img/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="./img/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="./img/apple-icon-72x72.png">
@@ -25,39 +25,40 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/img/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-    <script type="text/javascript" src="js/dygraph.min.js"></script>
-    <link rel="stylesheet" src="css/dygraph.css"/>
+
     <link rel="stylesheet" href="./css/ls_status.css"/>
+    <script src="./js/we_status.js" type="text/javascript"></script>
+
 </head>
 <body>
+<img class="logo-img" height="40" alt="dsp-logo" src="./img/wetter_logo.png"/>
 <div class="bg-div">
-    <img class="logo-img" height="40" alt="dsp-logo" src="./img/wetter_logo.png"/>
     <div class="logo-text">wnf Wetterserver BB</div>
 </div>
 <hr/>
 <div class="AktuelleTemperatur">{{AktuelleTemperatur}}°C</div>
 <hr/>
-<div class="MinMaxTemperatur">Minimum {{MinTemperatur}}°C</div>
-<div class="MinMaxTemperatur">Maximum {{MaxTemperatur}}°C</div>
-<hr/>
 <h1>{{Ueberschrift}}</h1>
-<div id="graphdiv1" style="width:100%; height:400px;"></div>
-<script type="text/javascript">
-  g1 = new Dygraph(
-    document.getElementById("graphdiv1"),
-    "daten/{{CSVDatei}}", // path to CSV file
-    {
-    valueRange: [{{rangemin}},{{rangemax}}],
-    fillGraph: true,
-    drawAxesAtZero: true
-    }          // options
-  );
-</script>
 <table>
     <tr><td><a href="./bb_24h">Die letzten 24 Stunden</a></td><td><a href="./bb_48h">Die letzten 48 Stunden</a></td></tr>
     <tr><td><a href="./bb_07d">Die letzten 7 Tage</a></td><td><a href="./bb_28d">Die letzten 4 Wochen</a></td></tr>
     <tr><td><a href="./bb_avg_07d">Durchschnitt der letzten 7 Tage</a></td><td><a href="./bb_avg_28d">Durchschnitt der letzten 4 Wochen</a></td></tr>
 </table>
 <hr/>
+<h3>{{WetterCount}} Wetterdaten</h3>
+<table>
+    <tr>
+        %for col in WetterKopf:
+        <th>{{col}}</th>
+        %end
+    </tr>
+    %for row in WetterDaten:
+    <tr>
+        %for col in row:
+        <td>{{col}}</td>
+        %end
+    </tr>
+    %end
+</table>
+<hr/>
 </body>
-</html>

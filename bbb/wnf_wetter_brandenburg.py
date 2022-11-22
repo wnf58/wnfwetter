@@ -71,12 +71,39 @@ def brandenburgTemperatur():
     return temp
 
 
+def brandenburgWerte(aTage):
+    aCount = 0
+    aDaten = []
+    with urllib.request.urlopen('https://wetter.nfix.de/durchschnitt?tage=%s' % aTage) as url:
+        data = json.load(url)
+        # print(data)
+        rec = data[0]
+        # print(rec)
+        aWerte = rec['werte']
+        # print(aWerte)
+        if aWerte:
+            # print(aWerte)
+            for r in aWerte:
+                # print(r)
+                # gleitender Durchschnitt
+                datum = r['datum']
+                min_temp = r['min_temp']
+                max_temp = r['max_temp']
+                avg_temp = r['avg_temp']
+                aDaten.append ((datum,min_temp,avg_temp,max_temp))
+
+                # print(aDaten)
+    aDatenKopf = ('Datum','min','Durchschnitt','max')
+    return aCount, aDaten, aDatenKopf
+
+
 def main():
     www = os.path.join(os.path.dirname(__file__), 'www')
     dn = "wetter_bb_24h.csv"
     print(brandenburgTemperatur())
-    aMinMax = brandenburgTempToCSV(1, os.path.join(www, "daten", dn))
-    print(aMinMax)
+    # aMinMax = brandenburgTempToCSV(1, os.path.join(www, "daten", dn))
+    # print(aMinMax)
+    brandenburgWerte(7)
 
 if __name__ == '__main__':
     main()

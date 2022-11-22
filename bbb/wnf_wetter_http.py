@@ -15,7 +15,7 @@ import wnf_wetter_const as C
 import wnf_wetter_db as db
 import wnf_wetter_tools as T
 
-from wnf_wetter_brandenburg import brandenburgTemperatur, brandenburgTempToCSV
+from wnf_wetter_brandenburg import brandenburgTemperatur, brandenburgTempToCSV, brandenburgWerte
 
 logger = logging.getLogger('wnf_wetter_http')
 
@@ -150,8 +150,6 @@ def wetterTemperatur(aStatus):
     return aTemperatur
 
 
-
-
 def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
     print(aMinMax)
     print(type(aMinMax))
@@ -188,6 +186,19 @@ def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
                       rangemax=aMinMax[1],
                       MinTemperatur=aMinMax[2],
                       MaxTemperatur=aMinMax[3]
+                      )
+    return output
+
+
+def wetterWerte_BB(aUeberschrift, aTage):
+    aCount, aDaten, aDatenKopf = brandenburgWerte(aTage)
+    aTemperatur = brandenburgTemperatur()
+    output = template('wetter_werte_bb',
+                      Ueberschrift=aUeberschrift,
+                      AktuelleTemperatur=aTemperatur,
+                      WetterCount=aCount,
+                      WetterDaten=aDaten,
+                      WetterKopf=aDatenKopf
                       )
     return output
 
@@ -269,6 +280,14 @@ def route_bb_07d():
     dn = "wetter_bb_07d.csv"
     aMinMax = brandenburgTempToCSV(7,os.path.join(www, "daten", dn))
     return wetterLinie_BB('BB Die letzte Woche', dn, aMinMax)
+
+@route('/bb_avg_07d')
+def route_bb_avg_07d():
+    return wetterWerte_BB('BB Die letzte Woche', 7)
+
+@route('/bb_avg_28d')
+def route_bb_avg_28d():
+    return wetterWerte_BB('BB Die letzte Woche', 28)
 
 @route('/bb_28d')
 def route_bb_28d():

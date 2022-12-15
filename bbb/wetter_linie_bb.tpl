@@ -54,6 +54,16 @@
   );
 </script>
 <table>
+    %for row in WetterStatus:
+    <tr>
+        %for col in row:
+        <td>{{col}}</td>
+        %end
+    </tr>
+    %end
+</table>
+<hr/>
+<table>
     <tr><td><a href="./bb_24h">Die letzten 24 Stunden</a></td><td><a href="./bb_48h">Die letzten 48 Stunden</a></td></tr>
     <tr><td><a href="./bb_07d">Die letzten 7 Tage</a></td><td><a href="./bb_28d">Die letzten 4 Wochen</a></td></tr>
     <tr><td><a href="./bb_avg_07d">Durchschnitt der letzten 7 Tage</a></td><td><a href="./bb_avg_28d">Durchschnitt der letzten 4 Wochen</a></td></tr>

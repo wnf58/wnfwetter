@@ -14,7 +14,6 @@ from bottle import route, get, template, static_file, request, response
 import wnf_wetter_const as C
 import wnf_wetter_db as db
 import wnf_wetter_tools as T
-
 from wnf_wetter_brandenburg import brandenburgTemperatur, brandenburgTempToCSV, brandenburgWerte
 
 logger = logging.getLogger('wnf_wetter_http')
@@ -137,6 +136,14 @@ def statusZeilen():
     return aStatus
 
 
+def statusZeilen_BB(aTemperatur, aZeit):
+    aStatus = ((
+        ('letzter Messwert um', '%s ' % (aZeit)),
+        ('Temperatur', '%s ' % (aTemperatur))
+    ))
+    return aStatus
+
+
 def wetterTemperatur(aStatus):
     aTemperatur = aStatus[4][1]
     aLetzterWert = aStatus[3][1]
@@ -156,7 +163,7 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
     aCaption = C.PROGNAME
     aStatus = statusZeilen()
     aTemperatur = wetterTemperatur(aStatus)
-    aBrandenburg = brandenburgTemperatur()
+    aBrandenburg = brandenburgTemperatur()[0]
     output = template('wetter_linie',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,
@@ -176,10 +183,12 @@ def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
     print(aMinMax)
     print(type(aMinMax))
     aCaption = C.PROGNAME
-    aTemperatur = brandenburgTemperatur()
+    aTemperatur, aZeit = brandenburgTemperatur()
+    aStatus = statusZeilen_BB(aTemperatur, aZeit)
     output = template('wetter_linie_bb',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,
+                      WetterStatus=aStatus,
                       Ueberschrift=aUeberschrift,
                       CSVDatei=aCSVDatei,
                       rangemin=aMinMax[0],
@@ -192,7 +201,7 @@ def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
 
 def wetterWerte_BB(aUeberschrift, aTage):
     aCount, aDaten, aDatenKopf = brandenburgWerte(aTage)
-    aTemperatur = brandenburgTemperatur()
+    aTemperatur = brandenburgTemperatur()[0]
     output = template('wetter_werte_bb',
                       Ueberschrift=aUeberschrift,
                       AktuelleTemperatur=aTemperatur,
@@ -207,7 +216,7 @@ def wetterMinMax(aUeberschrift, aCSVDatei, aMinMax):
     aCaption = C.PROGNAME
     aStatus = statusZeilen()
     aTemperatur = wetterTemperatur(aStatus)
-    aBBTemperatur = brandenburgTemperatur()
+    aBBTemperatur = brandenburgTemperatur()[0]
     output = template('wetter_minmax',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,

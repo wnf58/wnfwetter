@@ -62,13 +62,15 @@ def brandenburgTemperatur():
         with urllib.request.urlopen("https://wetter.nfix.de/aktuell") as url:
             data = json.load(url)
             rec = data[0]
+            print(rec)
             werte = rec['werte']
             temp = werte['temperatur']
             temp = str(temp)
+            zeit = werte['zeit']
     except Exception as E:
         print(E)
         temp = '?.?'
-    return temp
+    return temp,zeit
 
 
 def brandenburgWerte(aTage):
@@ -103,7 +105,9 @@ def main():
     print(brandenburgTemperatur())
     # aMinMax = brandenburgTempToCSV(1, os.path.join(www, "daten", dn))
     # print(aMinMax)
-    brandenburgWerte(7)
+    a = brandenburgWerte(7)
+    print(a)
+
 
 if __name__ == '__main__':
     main()

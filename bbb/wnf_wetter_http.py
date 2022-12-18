@@ -179,6 +179,17 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
     return output
 
 
+def wetterThermometer(aUeberschrift, aTemperatur):
+    aCaption = C.PROGNAME
+    aStatus = statusZeilen()
+    output = template('thermometer',
+                      title=aCaption,
+                      Ueberschrift=aUeberschrift,
+                      AktuelleTemperatur=aTemperatur
+                      )
+    return output
+
+
 def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
     print(aMinMax)
     print(type(aMinMax))
@@ -244,6 +255,10 @@ def route_13m():
     aMinMax = db.refresh_xxMonateMinMax(13, os.path.join(www, "daten", dn))
     return wetterMinMax('Die letzten 13 Monate', dn, aMinMax)
 
+@route('/thermometer')
+def route_thermometer():
+    aTemp = -10.9
+    return wetterThermometer('NF',aTemp)
 
 @route('/07d')
 def route_07d():

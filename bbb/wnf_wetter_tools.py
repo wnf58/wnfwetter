@@ -4,6 +4,8 @@ import os
 import socket
 import time
 
+from bottle import template
+
 import wnf_wetter_const as C
 
 
@@ -134,10 +136,37 @@ def getLuftdruckRec(aLuftdruck, aTemperatur):
     return aLuftdruck, s
 
 
+def thermometer_1_Template(aTemperatur):
+    # y bei 50°C 126,215
+    # y bei -25°C 511.530
+    # h bei 10 K  52,452
+    # h bei  1 K   5,425
+    # k1 = 300.7746 / 60  # h bei  1 K (gemessen in inkscape)
+    # yg = 511.530  # y bei -25°C (gemessen in inkscape)
+    yg = 516  # y bei -25°C (gemessen in inkscape)
+    y1 = 291.29129  # bei 20°C (gemessen in inkscape)
+    h1 = 225.28539  # bei 20°C (gemessen in inkscape)
+    h0 = 121.5683  # bei  0°C (gemessen in inkscape)
+    k1 = 5.1
+    print(aTemperatur, k1, y1, h1)
+    h1 = h0 + aTemperatur * k1
+    y1 = yg - h1
+    print(aTemperatur, k1, y1, h1)
+    output = template('thermometer_1_template',
+                      temp_h=h1,
+                      temp_y=y1,
+                      )
+    # print(type(output))
+    f = open("./www/img/thermometer.svg", "w")
+    f.write(output)
+    f.close()
+
+
 def main():
     aLuftdruck = 99070.0
-    aTemperatur = 25
-    print(getLuftdruckRec(aLuftdruck, aTemperatur))
+    aTemperatur = 30
+    # print(getLuftdruckRec(aLuftdruck, aTemperatur))
+    thermometer_1_Template(aTemperatur)
 
 
 if __name__ == "__main__":

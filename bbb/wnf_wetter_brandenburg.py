@@ -1,6 +1,8 @@
 import json
 import os
 import urllib.request
+import wnf_wetter_tools as T
+
 
 
 def refresh_xx(dn, aWerte):
@@ -70,7 +72,8 @@ def brandenburgTemperatur():
     except Exception as E:
         print(E)
         temp = '?.?'
-    return temp,zeit
+        zeit = ''
+    return temp, zeit
 
 
 def brandenburgWerte(aTage):
@@ -103,10 +106,14 @@ def main():
     www = os.path.join(os.path.dirname(__file__), 'www')
     dn = "wetter_bb_24h.csv"
     print(brandenburgTemperatur())
+    aTemp = brandenburgTemperatur()[0]
+    aTemp = float(aTemp)
+    print('aTemp',aTemp,type(aTemp))
+    T.thermometer_1_Template(aTemp)
     # aMinMax = brandenburgTempToCSV(1, os.path.join(www, "daten", dn))
     # print(aMinMax)
-    a = brandenburgWerte(7)
-    print(a)
+    # a = brandenburgWerte(7)
+    # print(a)
 
 
 if __name__ == '__main__':

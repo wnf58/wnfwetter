@@ -113,7 +113,10 @@ def csv(filepath):
 
 @route('/')
 def index():
-    return wetterstatus()
+    zeit, aTemperatur, aDruck, aFeuchte = db.letzterMesswert()
+    print(aTemperatur)
+    return wetterThermometer('Nf', aTemperatur)
+    # return wetterstatus()
 
 
 def statusZeilen():
@@ -181,7 +184,7 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
 
 def wetterThermometer(aUeberschrift, aTemperatur):
     aCaption = C.PROGNAME
-    aStatus = statusZeilen()
+    T.thermometer_1_Template(aTemperatur)
     output = template('thermometer',
                       title=aCaption,
                       Ueberschrift=aUeberschrift,
@@ -255,10 +258,12 @@ def route_13m():
     aMinMax = db.refresh_xxMonateMinMax(13, os.path.join(www, "daten", dn))
     return wetterMinMax('Die letzten 13 Monate', dn, aMinMax)
 
+
 @route('/thermometer')
 def route_thermometer():
-    aTemp = -10.9
-    return wetterThermometer('NF',aTemp)
+    zeit, aTemperatur, aDruck, aFeuchte = db.letzterMesswert()
+    print(aTemperatur)
+    return wetterThermometer('Nf', aTemperatur)
 
 @route('/07d')
 def route_07d():
@@ -298,6 +303,13 @@ def route_bb_48h():
     dn = "wetter_bb_48h.csv"
     aMinMax = brandenburgTempToCSV(2,os.path.join(www, "daten", dn))
     return wetterLinie_BB('BB Die letzten 48 Stunden', dn, aMinMax)
+
+
+@route('/bb_thermometer')
+def route_bb_thermometer():
+    aTemp = brandenburgTemperatur()[0]
+    aTemp = float(aTemp)
+    return wetterThermometer('BB', aTemp)
 
 @route('/bb_07d')
 def route_bb_07d():

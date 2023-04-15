@@ -116,7 +116,13 @@ def index():
     zeit, aTemperatur, aDruck, aFeuchte = db.letzterMesswert()
     print(aTemperatur)
     return wetterThermometer('Nf', aTemperatur)
+    # return wetterThermometer_2('Nf', aTemperatur)
     # return wetterstatus()
+
+
+def letzteTempNF():
+    zeit, aTemp, aDruck, aFeuchte = db.letzterMesswert()
+    return aTemp
 
 
 def statusZeilen():
@@ -193,12 +199,24 @@ def wetterThermometer(aUeberschrift, aTemperatur):
     return output
 
 
+def wetterThermometer_2(aUeberschrift, aTemperatur):
+    aCaption = C.PROGNAME
+    T.thermometer_1_Template(aTemperatur)
+    output = template('thermometer_2_template',
+                      title=aCaption,
+                      Ueberschrift=aUeberschrift,
+                      AktuelleTemperatur=aTemperatur
+                      )
+    return output
+
+
 def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
     print(aMinMax)
     print(type(aMinMax))
     aCaption = C.PROGNAME
     aTemperatur, aZeit = brandenburgTemperatur()
     aStatus = statusZeilen_BB(aTemperatur, aZeit)
+    aNiederfrohna = letzteTempNF()
     output = template('wetter_linie_bb',
                       title=aCaption,
                       AktuelleTemperatur=aTemperatur,
@@ -208,7 +226,8 @@ def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
                       rangemin=aMinMax[0],
                       rangemax=aMinMax[1],
                       MinTemperatur=aMinMax[2],
-                      MaxTemperatur=aMinMax[3]
+                      MaxTemperatur=aMinMax[3],
+                      NFTemperatur=aNiederfrohna
                       )
     return output
 
@@ -309,7 +328,8 @@ def route_bb_48h():
 def route_bb_thermometer():
     aTemp = brandenburgTemperatur()[0]
     aTemp = float(aTemp)
-    return wetterThermometer('BB', aTemp)
+    # return wetterThermometer('BB', aTemp)
+    return route_bb_07d()
 
 @route('/bb_07d')
 def route_bb_07d():

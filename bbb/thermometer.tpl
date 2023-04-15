@@ -32,7 +32,7 @@
 <style>
 body {
     background-color: white;
-    background-image: url('./img/thermometer_1.svg');
+    background-image: url('./img/thermometer.svg');
     background-size: auto 100%;
     background-repeat: no-repeat;
     background-position: left top;

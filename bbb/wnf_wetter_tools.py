@@ -148,10 +148,10 @@ def thermometer_1_Template(aTemperatur):
     h1 = 225.28539  # bei 20°C (gemessen in inkscape)
     h0 = 121.5683  # bei  0°C (gemessen in inkscape)
     k1 = 5.1
-    print(aTemperatur, k1, y1, h1)
+    # print('thermometer_1_Template',aTemperatur, k1, y1, h1)
     h1 = h0 + aTemperatur * k1
     y1 = yg - h1
-    print(aTemperatur, k1, y1, h1)
+    print('thermometer_1_Template',aTemperatur, k1, y1, h1)
     output = template('thermometer_1_template',
                       temp_h=h1,
                       temp_y=y1,

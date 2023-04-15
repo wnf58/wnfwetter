@@ -39,6 +39,7 @@
 <hr/>
 <div class="MinMaxTemperatur">Minimum {{MinTemperatur}}°C</div>
 <div class="MinMaxTemperatur">Maximum {{MaxTemperatur}}°C</div>
+<div class="MinMaxTemperatur"><a href="./48h">Niederfrohna</a>  {{NFTemperatur}}°C</div>
 <hr/>
 <h1>{{Ueberschrift}}</h1>
 <div id="graphdiv1" style="width:100%; height:400px;"></div>

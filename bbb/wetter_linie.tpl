@@ -39,7 +39,7 @@
 <hr/>
 <div class="MinMaxTemperatur">Minimum {{MinTemperatur}}°C</div>
 <div class="MinMaxTemperatur">Maximum {{MaxTemperatur}}°C</div>
-<div class="MinMaxTemperatur"><a href="./bb_48h">Brandenburg</a>  {{BBTemperatur}}°C</div>
+<div class="MinMaxTemperatur"><a href="./bb_48h">Trebbin</a>  {{BBTemperatur}}°C</div>
 <hr/>
 <h1>{{Ueberschrift}}</h1>
 <div id="graphdiv1" style="width:100%; height:400px;"></div>

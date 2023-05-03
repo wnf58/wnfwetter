@@ -130,6 +130,7 @@ def on_message(client, userdata, msg):
             aLetzteTime = aZeit
             anzeigeID(aID)
     except Exception as E:
+        print(msg.topic + " | "+str(msg.qos)+' | ' + str(msg.payload))
         print('Fehler', E)
         raise
 

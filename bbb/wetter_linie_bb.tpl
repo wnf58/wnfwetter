@@ -32,14 +32,14 @@
 <body>
 <div class="bg-div">
     <img class="logo-img" height="40" alt="dsp-logo" src="./img/wetter_logo.png"/>
-    <div class="logo-text">wnf Wetterserver BB</div>
+    <div class="logo-text">Wetter Trebbin</div>
 </div>
 <hr/>
 <div class="AktuelleTemperatur">{{AktuelleTemperatur}}°C</div>
 <hr/>
 <div class="MinMaxTemperatur">Minimum {{MinTemperatur}}°C</div>
 <div class="MinMaxTemperatur">Maximum {{MaxTemperatur}}°C</div>
-<div class="MinMaxTemperatur"><a href="./48h">Niederfrohna</a>  {{NFTemperatur}}°C</div>
+<div class="MinMaxTemperatur"><a href="{{NFhref}}">Niederfrohna</a>  {{NFTemperatur}}°C</div>
 <hr/>
 <h1>{{Ueberschrift}}</h1>
 <div id="graphdiv1" style="width:100%; height:400px;"></div>

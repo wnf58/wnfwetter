@@ -166,7 +166,7 @@ def wetterTemperatur(aStatus):
     return aTemperatur
 
 
-def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
+def wetterLinie(aBBhref, aUeberschrift, aCSVDatei, aMinMax):
     print(aMinMax)
     print(type(aMinMax))
     aCaption = C.PROGNAME
@@ -183,6 +183,7 @@ def wetterLinie(aUeberschrift, aCSVDatei, aMinMax):
                       rangemax=aMinMax[1],
                       MinTemperatur=aMinMax[2],
                       MaxTemperatur=aMinMax[3],
+                      BBhref=aBBhref,
                       BBTemperatur=aBrandenburg
                       )
     return output
@@ -210,7 +211,7 @@ def wetterThermometer_2(aUeberschrift, aTemperatur):
     return output
 
 
-def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
+def wetterLinie_BB(aNFhref, aUeberschrift, aCSVDatei, aMinMax):
     print(aMinMax)
     print(type(aMinMax))
     aCaption = C.PROGNAME
@@ -227,6 +228,7 @@ def wetterLinie_BB(aUeberschrift, aCSVDatei, aMinMax):
                       rangemax=aMinMax[1],
                       MinTemperatur=aMinMax[2],
                       MaxTemperatur=aMinMax[3],
+                      NFhref=aNFhref,
                       NFTemperatur=aNiederfrohna
                       )
     return output
@@ -288,40 +290,40 @@ def route_thermometer():
 def route_07d():
     dn = "wetter_07d.csv"
     aMinMax = db.refresh_xxTage(7, os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 7 Tage', dn, aMinMax)
+    return wetterLinie('./bb_07d', 'Die letzten 7 Tage', dn, aMinMax)
 
 
 @route('/28d')
 def route_28d():
     dn = "wetter_28d.csv"
     aMinMax = db.refresh_xxTage(28, os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 4 Wochen', dn, aMinMax)
+    return wetterLinie('./bb_28d', 'Die letzten 4 Wochen', dn, aMinMax)
 
 
 @route('/24h')
 def route_24h():
     dn = 'wetter_24h.csv'
     aMinMax = db.refresh_24h(os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 24 Stunden', dn, aMinMax)
+    return wetterLinie('./bb_24h', 'Die letzten 24 Stunden', dn, aMinMax)
 
 
 @route('/48h')
 def route_48h():
     dn = 'wetter_48h.csv'
     aMinMax = db.refresh_48h(os.path.join(www, "daten", dn))
-    return wetterLinie('Die letzten 48 Stunden', dn, aMinMax)
+    return wetterLinie('./bb_48h', 'Die letzten 48 Stunden', dn, aMinMax)
 
 @route('/bb_24h')
 def route_bb_24h():
     dn = "wetter_bb_24h.csv"
     aMinMax = brandenburgTempToCSV(1,os.path.join(www, "daten", dn))
-    return wetterLinie_BB('BB Die letzten 24 Stunden', dn, aMinMax)
+    return wetterLinie_BB('./24h', 'BB Die letzten 24 Stunden', dn, aMinMax)
 
 @route('/bb_48h')
 def route_bb_48h():
     dn = "wetter_bb_48h.csv"
     aMinMax = brandenburgTempToCSV(2,os.path.join(www, "daten", dn))
-    return wetterLinie_BB('BB Die letzten 48 Stunden', dn, aMinMax)
+    return wetterLinie_BB('./48h', 'BB Die letzten 48 Stunden', dn, aMinMax)
 
 
 @route('/bb_thermometer')
@@ -335,7 +337,7 @@ def route_bb_thermometer():
 def route_bb_07d():
     dn = "wetter_bb_07d.csv"
     aMinMax = brandenburgTempToCSV(7,os.path.join(www, "daten", dn))
-    return wetterLinie_BB('BB Die letzte Woche', dn, aMinMax)
+    return wetterLinie_BB('./07d', 'BB Die letzte Woche', dn, aMinMax)
 
 @route('/bb_avg_07d')
 def route_bb_avg_07d():
@@ -349,7 +351,7 @@ def route_bb_avg_28d():
 def route_bb_28d():
     dn = "wetter_bb_28d.csv"
     aMinMax = brandenburgTempToCSV(28,os.path.join(www, "daten", dn))
-    return wetterLinie_BB('BB Die letzten 4 Wochen', dn, aMinMax)
+    return wetterLinie_BB('./28d', 'BB Die letzten 4 Wochen', dn, aMinMax)
 
 def isDatenbankOK():
     dn = T.iniGetDatenbank()

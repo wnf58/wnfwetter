@@ -1,8 +1,8 @@
 import json
 import os
 import urllib.request
-import wnf_wetter_tools as T
 
+import wnf_wetter_tools as T
 
 
 def refresh_xx(dn, aWerte):
@@ -39,7 +39,7 @@ def refresh_xx(dn, aWerte):
             alt2 = alt1
             alt1 = aTemp
     aMinG = -20
-    aMaxG = 30
+    aMaxG = 36
     return aMinG, aMaxG, aMinZ, aMaxZ
 
 
